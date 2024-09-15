@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ReviewPage.css"; 
 import reviewImage from '../Assets/review2.png';
 import axios from 'axios';
@@ -87,6 +87,32 @@ const ReviewPage = () => {
     'ERIC_GOODFIELD',
     'MAHER_JARRAR'
   ];
+
+  const SEMESTER = [
+    'Spring_17-18',
+    'Summer_17-18',
+    'Fall_18-19',
+    'Spring_18-19',
+    'Summer_18-19',
+    'Fall_19-20',
+    'Spring_19-20',
+    'Summer_19-20',
+    'Fall_20-21',
+    'Spring_20-21',
+    'Summer_20-21',
+    'Fall_21-22',
+    'Spring_21-22',
+    'Summer_21-22',
+    'Fall_22-23',
+    'Spring_22-23',
+    'Summer_22-23',
+    'Fall_23-24',
+    'Spring_23-24',
+    'Summer_23-24',
+    'Fall_24-25',
+    'Spring_24-25',
+    'Summer_24-25',
+  ]
   
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -94,8 +120,10 @@ const ReviewPage = () => {
     courseNumber: "",
     courseType: "",
     professorName: "",
+    semester: "",
     courseRating: "",
-    reviewText: ""
+    reviewText: "",
+    username: localStorage.getItem('rememberedEmail') || ""
   });
 
   const handleChange = (e) => {
@@ -117,8 +145,10 @@ const ReviewPage = () => {
           courseNumber: "",
           courseType: "",
           professorName: "",
+          semester: "",
           courseRating: "",
-          reviewText: ""
+          reviewText: "",
+          username: formData.username
         });
       }, 5000);
       alert(response.data); 
@@ -153,6 +183,8 @@ const ReviewPage = () => {
   if (formData.courseType) params.append('courseType', formData.courseType);
   if (formData.courseNumber) params.append('courseNumber', formData.courseNumber);
   if (formData.courseRating) params.append('reviewRating', formData.courseRating);
+  if (formData.semester) params.append('semester', formData.semester);
+  if (formData.username) params.append('username', formData.username);
 
   try {
     const response = await axios.get('http://localhost:8080/reviews/search', { params });
@@ -197,7 +229,11 @@ const ReviewPage = () => {
               name="courseNumber"
               placeholder="Course Number"
               value={formData.courseNumber}
+              min="100"
+              max="500"
+              step="1"
               onChange={handleChange}
+              title="Please enter a number between 100 and 500"
               required
             />
            <select
@@ -230,12 +266,29 @@ const ReviewPage = () => {
                 </option>
               ))}
             </select>
+            <select
+              name="semester"
+              value={formData.semester}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                Select the semester in which you took the course
+              </option>
+              {SEMESTER.map((semester,index) => (
+                <option key={index} value={semester}>
+                  {semester.replace("_", " ")}
+                </option>
+              ))}
+            </select>
             <input
-              type="text"
+              type="number"
               name="courseRating"
               placeholder="Rating (1-5)"
-              pattern="[1-5]"
               value={formData.courseRating}
+              min="1"
+              max="5"
+              step="0.5"
               onChange={handleChange}
               title="Please enter a number between 1 and 5"
               required
@@ -260,6 +313,7 @@ const ReviewPage = () => {
       <div className="container-criterias">
             <h2>Search for a review</h2>
             <p>You can select as many criterias as you want.</p>
+            <p>If you want to see all the reviews, press the submit button without entering any criteria.</p>
             <form onSubmit={handleGetReviews}>
               <select
                 name="courseName"
@@ -280,8 +334,12 @@ const ReviewPage = () => {
                 name="courseNumber"
                 placeholder="Course Number"
                 value={formData.courseNumber}
+                min="100"
+                max="500"
+                step="1"
                 onChange={handleChange}
-              />
+                title="Please enter a number between 100 and 500"
+            />
             <select
                 name="courseType"
                 value={formData.courseType}
@@ -310,15 +368,31 @@ const ReviewPage = () => {
                   </option>
                 ))}
               </select>
-              <input
-                type="text"
-                name="courseRating"
-                placeholder="Rating (0-5)"
-                pattern="[0-5]"
-                value={formData.courseRating}
+              <select
+                name="semester"
+                value={formData.semester}
                 onChange={handleChange}
-                title="Please enter a number between 0 and 5"
-              />
+              >
+                <option value="" disabled>
+                  Select the semester in which you took the course
+                </option>
+                {SEMESTER.map((semester,index) => (
+                  <option key={index} value={semester}>
+                    {semester.replace("_", " ")}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                name="courseRating"
+                placeholder="Rating (1-5)"
+                value={formData.courseRating}
+                min="1"
+                max="5"
+                step="0.5"
+                onChange={handleChange}
+                title="Please enter a number between 1 and 5"
+            />
               <button type="submit">Submit</button>
           </form>
           
@@ -327,12 +401,14 @@ const ReviewPage = () => {
       {reviews.length > 0 ? (
       reviews.map((review, index) => (
         <div key={index} className="review-item">
-          <p>Course : {review.courseName}</p>
-          <p>Type: {review.courseType.replace("_", " ")}</p>
+          <p>UserName: {review.username} </p>
+          <p>Course: {review.courseName}</p>
           <p>Number: {review.courseNumber}</p>
+          <p>Type: {review.courseType.replace("_", " ")}</p>
           <p>Professor name: {review.professorName.replace("_", " ")}</p>
+          <p>Semester taken: {review.semester.replace("_"," ")}</p>
           <p>Rating: {review.courseRating}</p>
-          <p>Review : {review.reviewText}</p>
+          <p>Review: {review.reviewText}</p>
         </div>
       ))
     ) : (

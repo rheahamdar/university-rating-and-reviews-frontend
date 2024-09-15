@@ -3,8 +3,9 @@ import "./LoginForm.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
+import Cookie from 'js-cookie';
 
-const LoginForm = () => {
+const LoginForm = ({onLogin}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -59,7 +60,8 @@ const LoginForm = () => {
       });
 
       if (response.status === 200) {
-        alert(response.data); 
+        localStorage.setItem('rememberedEmail', email);
+        onLogin();
         navigate('/reviews');
       }
     }catch (error) {
@@ -78,11 +80,11 @@ const LoginForm = () => {
       }
     setError(errorMessage);
     }
+  } else {
+    setError('Please ensure all fields are filled correctly.');
+    }
     };
   
-
-  };
-
   return (
     <div className="page-container">
       <form onSubmit={handleSubmit}>
@@ -122,7 +124,7 @@ const LoginForm = () => {
                 /> 
                 Remember me
               </label>
-              <a href="#">Forgot password?</a>
+              <a href="/signup/forgot-password">Forgot password?</a>
             </div>
 
             <button type="submit" disabled={!isEmailValid || isPasswordValid}>Login</button>
