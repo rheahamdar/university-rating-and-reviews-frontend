@@ -11,29 +11,41 @@ const SignUpForm = () => {
   const [isEmailValid, setIsEmailValid] = useState(false);
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters");
+    }
+    if (!/[a-zA-Z]/.test(password)) {
+      errors.push("Password must contain at least one letter");
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push("Password must contain at least one number");
+    }
+    if (!/[!@#$%^&*_=+\-?]/.test(password)) {
+      errors.push("Password must contain at least one special character");
+    }
+    return errors;
+  };
+
   const validateEmail = (e) => {
     const value = e.target.value;
     setEmail(value);
-    if (!value.includes('@')) { 
-      setError('Please enter a valid email address.');
+    if (!value.endsWith('@mail.aub.edu')) {
+      setError('Email must end with @mail.aub.edu');
       setIsEmailValid(false);
     } else {
       setError('');
       setIsEmailValid(true);
     }
-
-    // if (!value.endsWith('@mail.aub.edu')) {
-    //   setError('Email must end with @mail.aub.edu');
-    //   setIsEmailValid(false);
-    // } else {
-    //   setError('');
-    //   setIsEmailValid(true);
-    // }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEmailValid && password) {
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+      alert(passwordErrors);
+    }else if (isEmailValid && password) {
       try {
         const response = await axios.post('http://localhost:8080/register/forgot-password', {
             email,

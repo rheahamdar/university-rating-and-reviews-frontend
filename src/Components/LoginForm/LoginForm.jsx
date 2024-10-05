@@ -3,7 +3,6 @@ import "./LoginForm.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
-import Cookie from 'js-cookie';
 
 const LoginForm = ({onLogin}) => {
   const [email, setEmail] = useState('');
@@ -25,21 +24,13 @@ const LoginForm = ({onLogin}) => {
   const validateEmail = (e) => {
     const value = e.target.value;
     setEmail(value);
-    if (!value.includes('@')) { 
-      setError('Please enter a valid email address.');
+    if (!value.endsWith('@mail.aub.edu')) {
+      setError('Email must end with @mail.aub.edu');
       setIsEmailValid(false);
     } else {
       setError('');
       setIsEmailValid(true);
     }
-
-    // if (!value.endsWith('@mail.aub.edu')) {
-    //   setError('Email must end with @mail.aub.edu');
-    //   setIsEmailValid(false);
-    // } else {
-    //   setError('');
-    //   setIsEmailValid(true);
-    // }
   };
 
   const handleSubmit = async (e) => {

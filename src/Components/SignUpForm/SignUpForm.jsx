@@ -16,21 +16,13 @@ const SignUpForm = () => {
   const validateEmail = (e) => {
     const value = e.target.value;
     setEmail(value);
-    if (!value.includes('@')) { 
-      setError('Please enter a valid email address.');
+    if (!value.endsWith('@mail.aub.edu')) {
+      setError('Email must end with @mail.aub.edu');
       setIsEmailValid(false);
     } else {
       setError('');
       setIsEmailValid(true);
     }
-
-    // if (!value.endsWith('@mail.aub.edu')) {
-    //   setError('Email must end with @mail.aub.edu');
-    //   setIsEmailValid(false);
-    // } else {
-    //   setError('');
-    //   setIsEmailValid(true);
-    // }
   };
 
   const validatePassword = (password) => {
@@ -44,7 +36,7 @@ const SignUpForm = () => {
     if (!/[0-9]/.test(password)) {
       errors.push("Password must contain at least one number");
     }
-    if (!/[!@#$%^&*_=+-?]/.test(password)) {
+    if (!/[!@#$%^&*_=+\-?]/.test(password)) {
       errors.push("Password must contain at least one special character");
     }
     return errors;

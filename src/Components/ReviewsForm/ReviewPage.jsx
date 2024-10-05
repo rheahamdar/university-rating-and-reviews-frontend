@@ -134,7 +134,6 @@ const ReviewPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:8080/reviews/create',formData);
-    
 
     if (response.status === 200) {
       setShowForm(false);
@@ -153,6 +152,8 @@ const ReviewPage = () => {
       }, 5000);
       alert(response.data); 
       navigate('/reviews');
+    } else {
+      alert("Error: " + response.data);
     }
   }catch (error) {
     let errorMessage = "An error occurred during submitting the review. Please try again.";
